@@ -25,4 +25,4 @@ This project was developed with:
 ## Setup
 
 ## Disclaimer
-This repository is for educational use only and should not to be distributed to external parties or colleagues. 
+This repository is for educational use only and should not be distributed to external parties or colleagues. 
