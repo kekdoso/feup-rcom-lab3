@@ -12,7 +12,7 @@ This is the third project for the Computer Networks course unit at FEUP.
 Implement and test a data communication protocol involving:
 * Control frames vs data frames
 * Frame synchronisation, error robustness, error correction and more
-* Stop-and-wait protocol
+* Stop-and-wait ARQ protocol
 * Modularity and layering
 * Performance evaluation
 	
