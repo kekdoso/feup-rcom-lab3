@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <stdio.h>
+#include <string.h>
 
 #define BAUDRATE B38400
 #define _POSIX_SOURCE 1 /* POSIX compliant source */
@@ -15,9 +16,9 @@ volatile int STOP=FALSE;
 
 int main(int argc, char** argv)
 {
-    int fd,c, res;
+    int fd,c, res, res2;
     struct termios oldtio,newtio;
-    char buf[255];
+    char buf[255], str[255];
 
     if ( (argc < 2) ||
          ((strcmp("/dev/ttyS0", argv[1])!=0) &&
@@ -69,16 +70,16 @@ int main(int argc, char** argv)
     printf("New termios structure set\n");
 
     while (STOP == FALSE) {       /* loop for input */
-        res = read(fd,buf,255);   /* returns after 5 (1) chars have been input */
+        res = read(fd,buf,1);   /* returns after 5 (1) chars have been input */        
         //buf[res]=0;               /* so we can printf... */
-        printf(":%s:%d\n", buf, res);
-        res = write(fd,buf,255);
-        printf("%d bytes written\n", res);
-        if (buf[strlen(buf)]=='\0') STOP=TRUE;
+        //printf(":%s:%d", buf, res);
+        strcat(str, buf);
+        if (buf[0]=='\0') STOP=TRUE;
+        printf("%s:%d\n", buf, res);  
     }
-    
-    res = write(fd,buf,255);
-    printf("%d bytes written\n", res);
+    res2 = write(fd,str,strlen(str)+1);
+    //printf(":%s:%d\n", str, res2);  
+    printf("%d bytes written\n", res2);
 
 
     /*
