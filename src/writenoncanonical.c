@@ -6,6 +6,7 @@
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BAUDRATE B38400
 #define MODEMDEVICE "/dev/ttyS1"
@@ -17,9 +18,9 @@ volatile int STOP = FALSE;
 
 int main(int argc, char** argv)
 {
-    int fd, c, res;
+    int fd, c, res, res2;
     struct termios oldtio, newtio;
-    char buf[255], str[255];
+    char buf[255], str[255], str2[255];
     int i, sum = 0, speed = 0;
 
     if ( (argc < 2) ||
@@ -56,7 +57,6 @@ int main(int argc, char** argv)
     newtio.c_cc[VMIN]     = 1;   /* blocking read until 1 char received */
 
 
-
     /*
     VTIME e VMIN devem ser alterados de forma a proteger com um temporizador a
     leitura do(s) próximo(s) caracter(es)
@@ -72,7 +72,6 @@ int main(int argc, char** argv)
     }
 
     printf("New termios structure set\n");
-
     
     printf("Enter a string : ");
     gets(str);
@@ -84,25 +83,19 @@ int main(int argc, char** argv)
     res = write(fd,buf,strlen(str)+1);
     printf("%d bytes written\n", res);
 
-    while (STOP == FALSE) {       /* loop for input */
-        res = read(fd,buf,255);   /* returns after 5 chars have been input */
-        buf[res] = 0;             /* so we can printf... */
+    while (STOP == FALSE) {       // loop for input 
+        res = read(fd,buf,255);   // returns after 5 chars have been input
+        buf[res] = 0;             // so we can printf...
         printf(":%s:%d\n", buf, res);
-        printf("%d\n", strlen(buf));
-        if (buf[strlen(str)+1] == '\0') STOP = TRUE;
+        //printf("%d\n", strlen(buf));
+        if (buf[0] == '\0') STOP = TRUE;
     }
-
-    /*
-    O ciclo FOR e as instrucoes seguintes devem ser alterados de modo a respeitar
-    o indicado no guiao
-    */
 
     sleep(1);
     if ( tcsetattr(fd,TCSANOW,&oldtio) == -1) {
         perror("tcsetattr");
         exit(-1);
     }
-
 
     close(fd);
     return 0;
