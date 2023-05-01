@@ -4,6 +4,17 @@
 ## Overview
 This is the third project for the Computer Networks course unit at FEUP.
 
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#main-goal">Main goal</a></li>
+    <li><a href="#development-environment">Development Environment</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#disclaimer">Disclaimer</a></li>
+  </ol>
+</details>
+
 * [Main goal](#main-goal)
 * [Development Environment](#development-environment)
 * [Setup](#setup)
