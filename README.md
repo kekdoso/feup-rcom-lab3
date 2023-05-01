@@ -15,11 +15,6 @@ This is the third project for the Computer Networks course unit at FEUP.
   </ol>
 </details>
 
-* [Main goal](#main-goal)
-* [Development Environment](#development-environment)
-* [Setup](#setup)
-* [Disclaimer](#disclaimer)
-
 ## Main goal
 Implement and test a data communication protocol involving:
 * Control frames vs data frames
