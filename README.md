@@ -1,19 +1,20 @@
 <a name="readme-top"></a>
 # FEUP-rcom-lab3
 
-## Overview
-This is the third project for the Computer Networks course unit at FEUP.
-
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#overview">Overview</a></li>
     <li><a href="#main-goal">Main goal</a></li>
     <li><a href="#development-environment">Development Environment</a></li>
     <li><a href="#setup">Setup</a></li>
     <li><a href="#disclaimer">Disclaimer</a></li>
   </ol>
 </details>
+
+## Overview
+This is the third project for the Computer Networks course unit at FEUP.
 
 ## Main goal
 Implement and test a data communication protocol involving:
