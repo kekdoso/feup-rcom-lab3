@@ -1,12 +1,20 @@
+<a name="readme-top"></a>
 # FEUP-rcom-lab3
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#main-goal">Main goal</a></li>
+    <li><a href="#development-environment">Development Environment</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#disclaimer">Disclaimer</a></li>
+  </ol>
+</details>
 
 ## Overview
 This is the third project for the Computer Networks course unit at FEUP.
-
-* [Main goal](#main-goal)
-* [Development Environment](#development-environment)
-* [Setup](#setup)
-* [Disclaimer](#disclaimer)
 
 ## Main goal
 Implement and test a data communication protocol involving:
@@ -26,3 +34,5 @@ This project was developed with:
 
 ## Disclaimer
 This repository is for educational use only. 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
