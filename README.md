@@ -31,6 +31,35 @@ This project was developed with:
 * Serial ports: RS-232 (asynchronous communication)
 	
 ## Setup
+#1
+If you don't have a serial port you can still implement the protocol and application.
+
+On Windows (you need cygwin):
+http://www.mks.zp.ua/vspdxp.php
+http://www.eltima.com/products/vspdxp/ (trial version)
+http://www.virtual-serial-port.com/ (trial version)
+
+On Linux:
+https://tibbo.com/support/downloads/vspdl.html (VSPDL)
+
+#2
+Or:
+
+sudo apt install socat
+
+sudo socat -d -d PTY,link=/dev/ttyS10,mode=777 PTY,link=/dev/ttyS11,mode=777
+
+#3
+
+1. Download, compile, and run the virtual cable program "cable.c".
+
+gcc cable.c -o cable
+sudo ./cable
+
+2. Connect the transmitter to /dev/ttyS10 and the receiver to /dev/ttS11 (or the other way around).
+
+3. Type on and off in the cable program to plug or unplug the virtual cable.
+
 
 ## Disclaimer
 This repository is for educational use only. 
