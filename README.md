@@ -14,7 +14,7 @@
 </details>
 
 ## Overview
-This is the third project for the Computer Networks course unit at FEUP.
+This is the third project for the Computer Networks course unit at FEUP (2nd semester of 2022/23).
 
 ## Main goal
 Implement and test a data communication protocol involving:
