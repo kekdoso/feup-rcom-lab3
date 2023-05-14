@@ -59,7 +59,7 @@ sudo ./cable
 2. Connect the transmitter to /dev/ttyS10 and the receiver to /dev/ttS11 (or the other way around).
 
 3. Type on and off in the cable program to plug or unplug the virtual cable.
-
+<p align="right">(courtesy of professor Manuel Alberto Pereira Ricardo)
 
 ## Disclaimer
 This repository is for educational use only. 
