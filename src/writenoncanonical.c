@@ -41,7 +41,7 @@ int C_RCV = C_UA;
 int fd; 
 int alarmCounter = 0;
 
-void alarmPickup() /* picks up alarm*/ 
+void alarmPickup() /* picks up alarm */ 
 {
     char str[255];
     int res;
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 
 
     /*
-    VTIME e VMIN must be altered in order to protect 
+    VTIME and VMIN must be altered in order to protect 
     with a timer the reading of the next character(s)
     */
 
@@ -152,8 +152,8 @@ int main(int argc, char** argv)
 
     printf("UA State Machine has started\n"); 
     while (STOP == FALSE) {       /* loop for input */
-        res = read(fd,buf,1);   /* returns after 5 (1) chars have been input */        
-        //buf[res]=0;               /* so we can printf... */
+        res = read(fd,buf,1);     /* returns after 5 (1) chars have been input */        
+        //buf[res]=0;             /* so we can printf... */
         //printf(":%s:%d", buf, res);
         printf("var=0x%02x\n",(unsigned int)(buf[0] & 0xff));
         switch(frameState){
