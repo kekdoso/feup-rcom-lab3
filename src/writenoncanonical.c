@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <signal.h>
 
 #define BAUDRATE B38400
 #define MODEMDEVICE "/dev/ttyS1"
@@ -30,23 +32,51 @@ typedef enum{
     stateCRCV,
     stateBCCOK,
     stateOther,
-    stateStop,
+    stateStop
 } frameStates;
 
 frameStates frameState = stateStart;
 
-int C_RCV = C_UA; /* in here, we receive the UA message */
+int C_RCV = C_UA;
+
+int fd; 
+int alarmCounter = 0;
+
+void alarmPickup()                   // atende alarme
+{
+    char str[255];
+    int res;
+    
+    /*printf("Enter a string : ");
+    gets(str);*/
+    
+    str[0] = 0x5c;      /*   F   */
+    str[1] = 0x03;      /*   A   */
+    str[2] = 0x03;      /*   C   */
+    str[3] = 0x03^0x03; /* BCCOK */
+    str[4] = 0x5c;      /*   F   */
+
+    res = write(fd,str,5);
+    printf("%d bytes written\n", res);
+    alarmCounter++;
+    if (alarmCounter == 4){
+        printf("Reached max alarms. \nExiting...\n");
+        exit(1);
+    }
+    alarm(3);
+}
 
 int main(int argc, char** argv)
 {
-    int fd, c, res, res2, flagged = 0;
+    (void) signal(SIGALRM, alarmPickup);
+    int c, res, res2, SMFlag = 0;
     struct termios oldtio, newtio;
     char buf[255], str[255], str2[255];
     int i, sum = 0, speed = 0;
 
     if ( (argc < 2) ||
-         ((strcmp("/dev/ttyS0", argv[1])!=0) &&
-          (strcmp("/dev/ttyS1", argv[1])!=0) )) {
+         ((strcmp("/dev/ttyS10", argv[1])!=0) &&
+          (strcmp("/dev/ttyS11", argv[1])!=0) )) {
         printf("Usage:\tnserial SerialPort\n\tex: nserial /dev/ttyS1\n");
         exit(1);
     }
@@ -111,6 +141,7 @@ int main(int argc, char** argv)
 
     res = write(fd,str,5);
     printf("%d bytes written\n", res);
+    alarm(3);
 
     /*while (STOP == FALSE) {           // loop for input 
         res = read(fd,buf,255);       // returns after 5 chars have been input
@@ -121,7 +152,6 @@ int main(int argc, char** argv)
     }*/
 
     printf("UA State Machine has started\n"); 
-
     while (STOP == FALSE) {       /* loop for input */
         res = read(fd,buf,1);   /* returns after 5 (1) chars have been input */        
         //buf[res]=0;               /* so we can printf... */
@@ -148,7 +178,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart; 
                     printf("stateStart\n");            
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             case stateARCV:
@@ -163,7 +193,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart; 
                     printf("stateStart\n");            
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;  
 
@@ -179,32 +209,33 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart;
                     printf("stateStart\n");
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             
             case stateBCCOK:
                 if (buf[0] == FLAG_RCV){
                     //frameState = stateStop;
+                    STOP=TRUE;
                     printf("stateStop\n"); 
                 }
                 else{
                     frameState = stateStart;
                     printf("stateStart\n");
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
-                              
-        } 
-        
-        if (buf[0]==FLAG_RCV && flagged==1)
+                    
+        }
+        /*if (buf[0]==FLAG_RCV && SMFlag==1)
             STOP=TRUE;
         if(buf[0] == FLAG_RCV)
-            flagged = 1;
+            SMFlag = 1;*/
         printf("%s:%d\n", buf, res);  
     }
-   
 
+    alarm(0);
+    alarmCounter = 0;
     sleep(1);
     if ( tcsetattr(fd,TCSANOW,&oldtio) == -1) {
         perror("tcsetattr");

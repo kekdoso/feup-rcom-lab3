@@ -28,7 +28,7 @@ typedef enum{
     stateCRCV,
     stateBCCOK,
     stateOther,
-    stateStop,
+    stateStop
 } frameStates;
 
 frameStates frameState = stateStart;
@@ -37,15 +37,18 @@ int C_RCV = C_SET;
 
 int main(int argc, char** argv)
 {
+    // (void) signal(SIGALRM, alarmPickup);  // instala rotina que atende interrupcao
+
+
     int fd,c, res, res2;
-    int flagged = 0, i = 0;
+    int SMFlag = 0, i = 0;
     struct termios oldtio,newtio;
     char buf[255], str[255];
 
     if ( (argc < 2) ||
-         ((strcmp("/dev/ttyS0", argv[1])!=0) &&
-          (strcmp("/dev/ttyS1", argv[1])!=0) )) {
-        printf("Usage:\tnserial SerialPort\n\tex: nserial /dev/ttyS1\n");
+         ((strcmp("/dev/ttyS10", argv[1])!=0) &&
+          (strcmp("/dev/ttyS11", argv[1])!=0) )) {
+        printf("Usage:\tnserial SerialPort\n\tex: nserial /dev/ttyS10\n");
         exit(1);
     }
 
@@ -77,7 +80,7 @@ int main(int argc, char** argv)
 
     /*
     VTIME e VMIN devem ser alterados de forma a proteger com um temporizador a
-    leitura do(s) próximo(s) caracter(es)
+    leitura do(s) proximo(s) caracter(es)
     */
 
 
@@ -119,7 +122,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart; 
                     printf("stateStart\n");            
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             case stateARCV:
@@ -135,7 +138,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart; 
                     printf("stateStart\n");            
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;  
 
@@ -153,7 +156,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart;
                     printf("stateStart\n");
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             
@@ -165,7 +168,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart;
                     printf("stateStart\n");
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             
@@ -176,12 +179,12 @@ int main(int argc, char** argv)
         } 
         str[i] = buf[0];
         i++;
-        if (buf[0]==FLAG_RCV && flagged==1) 
+        if (buf[0]==FLAG_RCV && SMFlag==1) 
         {
             STOP=TRUE;
         }
         if(buf[0]==FLAG_RCV)
-            flagged = 1;
+            SMFlag = 1;
         printf("%s:%d\n", buf, res);  
     }
     res2 = write(fd,str,i);
@@ -190,7 +193,7 @@ int main(int argc, char** argv)
 
 
     /*
-    O ciclo WHILE deve ser alterado de modo a respeitar o indicado no guião
+    O ciclo WHILE deve ser alterado de modo a respeitar o indicado no guiao
     */
     
     sleep(1);
