@@ -55,6 +55,8 @@ sudo socat -d -d PTY,link=/dev/ttyS10,mode=777 PTY,link=/dev/ttyS11,mode=777
 1. Download, compile, and run the virtual cable program "cable.c".
 ```sh
 gcc cable.c -o cable
+```
+```sh
 sudo ./cable
 ```
 2. Connect the transmitter to /dev/ttyS10 and the receiver to /dev/ttS11 (or the other way around).
