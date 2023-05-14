@@ -35,27 +35,28 @@ This project was developed with:
 If you don't have a serial port you can still implement the protocol and application.
 
 On Windows (you need cygwin):
-http://www.mks.zp.ua/vspdxp.php
-http://www.eltima.com/products/vspdxp/ (trial version)
-http://www.virtual-serial-port.com/ (trial version)
+* http://www.mks.zp.ua/vspdxp.php
+* http://www.eltima.com/products/vspdxp/ (trial version)
+* http://www.virtual-serial-port.com/ (trial version)
 
 On Linux:
-https://tibbo.com/support/downloads/vspdl.html (VSPDL)
+* https://tibbo.com/support/downloads/vspdl.html (VSPDL)
 
 #2
 Or:
 ```sh
 sudo apt install socat
 ```
+```sh
 sudo socat -d -d PTY,link=/dev/ttyS10,mode=777 PTY,link=/dev/ttyS11,mode=777
-
+```
 #3
 
 1. Download, compile, and run the virtual cable program "cable.c".
-
+```sh
 gcc cable.c -o cable
 sudo ./cable
-
+```
 2. Connect the transmitter to /dev/ttyS10 and the receiver to /dev/ttS11 (or the other way around).
 
 3. Type on and off in the cable program to plug or unplug the virtual cable.
