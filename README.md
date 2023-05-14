@@ -35,7 +35,7 @@ This project was developed with:
 If you don't have a serial port you can still implement the protocol and application.
 
 On Windows (you need cygwin):
-* http://www.mks.zp.ua/vspdxp.php
+* https://www.cygwin.com/
 * http://www.eltima.com/products/vspdxp/ (trial version)
 * http://www.virtual-serial-port.com/ (trial version)
 
