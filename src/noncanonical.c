@@ -28,7 +28,8 @@ typedef enum{
     stateCRCV,
     stateBCCOK,
     stateOther,
-    stateStop,
+    destuff,
+    stateStop
 } frameStates;
 
 frameStates frameState = stateStart;
@@ -37,15 +38,18 @@ int C_RCV = C_SET;
 
 int main(int argc, char** argv)
 {
+    // (void) signal(SIGALRM, alarmPickup);  // instala rotina que atende interrupcao
+
+
     int fd,c, res, res2;
-    int flagged = 0, i = 0;
+    int SMFlag = 0, i = 0, j = 0, skip = 0, destuffFlag = 0;
     struct termios oldtio,newtio;
-    char buf[255], str[255];
+    char buf[255], str[255], str2[255];
 
     if ( (argc < 2) ||
          ((strcmp("/dev/ttyS0", argv[1])!=0) &&
           (strcmp("/dev/ttyS1", argv[1])!=0) )) {
-        printf("Usage:\tnserial SerialPort\n\tex: nserial /dev/ttyS1\n");
+        printf("Usage:\tnserial SerialPort\n\tex: nserial /dev/ttyS0\n");
         exit(1);
     }
 
@@ -77,7 +81,7 @@ int main(int argc, char** argv)
 
     /*
     VTIME e VMIN devem ser alterados de forma a proteger com um temporizador a
-    leitura do(s) próximo(s) caracter(es)
+    leitura do(s) proximo(s) caracter(es)
     */
 
 
@@ -91,7 +95,7 @@ int main(int argc, char** argv)
 
     printf("New termios structure set\n");
     printf("State Machine SET started\n"); 
-
+    i = 0;
     while (STOP == FALSE) {       /* loop for input */
         res = read(fd,buf,1);   /* returns after 5 (1) chars have been input */        
         //buf[res]=0;               /* so we can printf... */
@@ -105,6 +109,7 @@ int main(int argc, char** argv)
                     frameState = stateFlagRCV;
                     printf("stateFlagRCV\n");
                 }
+                
                 break;
 
             case stateFlagRCV:
@@ -119,7 +124,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart; 
                     printf("stateStart\n");            
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             case stateARCV:
@@ -135,7 +140,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart; 
                     printf("stateStart\n");            
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;  
 
@@ -153,7 +158,7 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart;
                     printf("stateStart\n");
-                    flagged = 0;
+                    SMFlag = 0;
                 }
                 break;
             
@@ -165,32 +170,43 @@ int main(int argc, char** argv)
                 else{
                     frameState = stateStart;
                     printf("stateStart\n");
-                    flagged = 0;
                 }
                 break;
-            
-            /*case stateStop:
-                printf("stateStop\n"); 
-                break;*/
-                    
+                  
         } 
-        str[i] = buf[0];
-        i++;
-        if (buf[0]==FLAG_RCV && flagged==1) 
-        {
-            STOP=TRUE;
+        if (buf[0] == 0x5d)
+            destuffFlag = 1;
+        if (destuffFlag && buf[0] == 0x7c){
+            str2[i-1] = 0x5c;
+            skip = 1;
+        } 
+        if (destuffFlag && buf[0] == 0x7d){
+            skip = 1;
+        } 
+        if (!skip){
+            str2[i] = buf[0];
+            i++;
         }
+
+        else{
+            skip = 0;
+            destuffFlag = 0;
+        }
+        if (buf[0]==FLAG_RCV && SMFlag==1) 
+            STOP=TRUE;
         if(buf[0]==FLAG_RCV)
-            flagged = 1;
-        printf("%s:%d\n", buf, res);  
+            SMFlag = 1;
     }
-    res2 = write(fd,str,i);
+    for(j=0; j<i; j++)
+        printf("0x%02x:%d\n", (unsigned int)(str2[j] & 0xff), 1);  
+
+    res2 = write(fd,str2,i);
     //printf(":%s:%d\n", str, res2);  
     printf("%d bytes written\n", res2);
 
 
     /*
-    O ciclo WHILE deve ser alterado de modo a respeitar o indicado no guião
+    O ciclo WHILE deve ser alterado de modo a respeitar o indicado no guiao
     */
     
     sleep(1);
