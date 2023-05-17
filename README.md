@@ -14,7 +14,7 @@
 </details>
 
 ## Overview
-This is the third project for the Computer Networks course unit at FEUP.
+This is the third project for the Computer Networks course unit at FEUP (2nd semester of 2022/23).
 
 ## Main goal
 Implement and test a data communication protocol involving:
@@ -31,6 +31,38 @@ This project was developed with:
 * Serial ports: RS-232 (asynchronous communication)
 	
 ## Setup
+#1
+If you don't have a serial port you can still implement the protocol and application.
+
+On Windows (you need cygwin):
+* https://www.cygwin.com/
+* http://www.eltima.com/products/vspdxp/ (trial version)
+* http://www.virtual-serial-port.com/ (trial version)
+
+On Linux:
+* https://tibbo.com/support/downloads/vspdl.html (VSPDL)
+
+#2
+Or:
+```sh
+sudo apt install socat
+```
+```sh
+sudo socat -d -d PTY,link=/dev/ttyS10,mode=777 PTY,link=/dev/ttyS11,mode=777
+```
+#3
+
+1. Download, compile, and run the virtual cable program "cable.c".
+```sh
+gcc cable.c -o cable
+```
+```sh
+sudo ./cable
+```
+2. Connect the transmitter to /dev/ttyS10 and the receiver to /dev/ttS11 (or the other way around).
+
+3. Type on and off in the cable program to plug or unplug the virtual cable.
+<p align="right">(courtesy of professor Manuel Alberto Pereira Ricardo)
 
 ## Disclaimer
 This repository is for educational use only. 
