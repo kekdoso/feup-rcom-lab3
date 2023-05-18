@@ -53,9 +53,15 @@ void alarmPickup() /* picks up alarm */
     str2[1] = A_RCV;       /*   A   */
     str2[2] = C_SET;       /*   C   */
     str2[3] = C_SET^A_RCV; /* BCCOK */
-    str2[4] = FLAG_RCV;    /*   F   */
+    str2[4] = 0x5c;
+    str2[5] = 0x5c;
+    str2[6] = 0x5d;
+    str2[7] = 0x5d;
+    str2[8] = 0x5c;
+    str2[9] = FLAG_RCV;    /*   F   */
 
-    res = write(fd,str2,5);
+
+    res = write(fd,str2,10);
     printf("%d bytes written\n", res);
     alarmCounter++;
     if (alarmCounter == 5){
@@ -74,8 +80,8 @@ int main(int argc, char** argv)
     int i, sum = 0, speed = 0;
 
     if ( (argc < 2) ||
-         ((strcmp("/dev/ttyS0", argv[1])!=0) &&
-          (strcmp("/dev/ttyS1", argv[1])!=0) )) {
+         ((strcmp("/dev/ttyS10", argv[1])!=0) &&
+          (strcmp("/dev/ttyS11", argv[1])!=0) )) {
         printf("Usage:\tnserial SerialPort\n\tex: nserial /dev/ttyS1\n");
         exit(1);
     }
@@ -109,7 +115,7 @@ int main(int argc, char** argv)
 
     /*
     VTIME e VMIN devem ser alterados de forma a proteger com um temporizador a
-    leitura do(s) próximo(s) caracter(es)
+    leitura do(s) pro'ximo(s) caracter(es)
     */
 
 
@@ -132,20 +138,26 @@ int main(int argc, char** argv)
     str[2] = C_SET;       /*   C   */
     str[3] = C_SET^A_RCV; /* BCCOK */
     str[4] = 0x5c;
-    str[5] = 0x37;
-    str[6] = 0x40;
+    str[5] = 0x5c;
+    str[6] = 0x5d;
     str[7] = 0x5d;
-    str[8] = 0x02;
+    str[8] = 0x5c;
     str[9] = FLAG_RCV;    /*   F   */
 
-    /* byte stuffing */
-    int j, k;
-    int size = 9;
+    int j, k, size = 9;
+    char xor = str[4];
 
-    for(j = 1; j < size; j++)
-    {
-        if(str[j] == 0x5d) /*if (0x5d) occurs, it is replaced by the sequence 0x5d 0x7d*/
-        {
+    for(j = 5; j < size; j++)
+        xor = xor^str[j];
+    
+    str[size+1] = str[size];
+    str[size] = xor;
+    size++;
+
+    /* byte stuffing */
+    for(j = 1; j < size; j++){
+
+        if(str[j] == 0x5d){ /*if (0x5d) occurs, it is replaced by the sequence 0x5d 0x7d*/
             for(k = size+1; k > j+1; k--)
                 str[k] = str[k-1];
             str[j+1] = 0x7d;
@@ -153,10 +165,9 @@ int main(int argc, char** argv)
         }
     }
 
-    for(j = 1; j < size; j++)
-    {
-        if(str[j] == 0x5c) /*if (0x5c) occurs, it is replaced by the sequence 0x5d 0x7c*/
-        {
+    for(j = 1; j < size; j++){
+
+        if(str[j] == 0x5c){ /*if (0x5c) occurs, it is replaced by the sequence 0x5d 0x7c*/
             str[j] = 0x5d;
             for(k = size+1; k > j+1; k--)            
                 str[k] = str[k-1];
@@ -183,87 +194,89 @@ int main(int argc, char** argv)
     }*/
 
     printf("--- UA State Machine has started ---\n"); 
-    while (STOP == FALSE) {       /* loop for input */
-        res = read(fd,buf,1);   /* returns after 5 (1) chars have been input */        
-        //buf[res]=0;               /* so we can printf... */
+    /*while (STOP == FALSE) {       // loop for input 
+        res = read(fd,buf,1);   // returns after 5 (1) chars have been input       
+        //buf[res]=0;               // so we can printf... 
         //printf(":%s:%d", buf, res);
         printf("var = 0x%02x\n",(unsigned int)(buf[0] & 0xff));
         switch(frameState){
 
             case stateStart:
-                if (buf[0] == FLAG_RCV){
+                if (buf[0] == FLAG_RCV)
+                {
                     frameState = stateFlagRCV;
-                    printf("Message current state: stateFlagRCV\n");
+                    printf("stateFlagRCV\n");
                 }
+                
                 break;
 
             case stateFlagRCV:
                 if (buf[0] == FLAG_RCV){
                     frameState = stateFlagRCV;
-                    printf("Message current state: stateFlagRCV\n");
+                    printf("stateFlagRCV\n");
                 }
                 else if (buf[0] == A_RCV || buf[0] == ALT_A_RCV){
                     frameState = stateARCV;
-                    printf("Message current state: stateARCV\n");
+                    printf("stateARCV\n");
                 }
                 else{
                     frameState = stateStart; 
-                    printf("Message current state: stateStart\n");            
+                    printf("stateStart\n");            
                     SMFlag = 0;
                 }
                 break;
-
             case stateARCV:
                 if (buf[0] == FLAG_RCV){
                     frameState = stateFlagRCV;
-                    printf("Message current state: stateFlagRCV\n");
+                    printf("stateFlagRCV\n");
                 }
-                else if (buf[0] == C_RCV){
+                else if (buf[0] == C_UA){
                     frameState = stateCRCV;
-                    printf("Message current state: stateCRCV\n");
+                    printf("stateCRCV\n");
                 }
                 else{
                     frameState = stateStart; 
-                    printf("Message current state: stateStart\n");            
+                    printf("stateStart\n");            
                     SMFlag = 0;
                 }
                 break;  
 
             case stateCRCV:
+
                 if (buf[0] == FLAG_RCV){
                     frameState = stateFlagRCV;
-                    printf("Message current state: stateFLAGRCV\n");
+                    printf("stateFLAGRCV\n");
                 }
-                else if (buf[0] == A_RCV^C_RCV || buf[0] == ALT_A_RCV^C_RCV){
+                else if (buf[0] == A_RCV^C_RCV || buf[0] == ALT_A_RCV^C_RCV)
+                {
                     frameState = stateBCCOK;
-                    printf("Message current state: stateBCCOK\n");
+                    printf("stateBCCOK\n");
                 }
                 else{
                     frameState = stateStart;
-                    printf("Message current state: stateStart\n");
+                    printf("stateStart\n");
                     SMFlag = 0;
                 }
                 break;
             
             case stateBCCOK:
                 if (buf[0] == FLAG_RCV){
-                    //STOP = TRUE;
-                    printf("Message current state: stateStop\n"); 
+                    //frameState = stateStop;
+                    printf("stateStop\n"); 
                 }
                 else{
                     frameState = stateStart;
-                    printf("Message current state: stateStart\n");
-                    
+                    printf("stateStart\n");
                 }
                 break;
-                    
-        }
+                  
+        } 
         if (buf[0] == FLAG_RCV && SMFlag == 1)
             STOP = TRUE;
         if(buf[0] == FLAG_RCV)
             SMFlag = 1;
         printf("%s:%d\n", buf, res);  
-    }
+    } */
 
     alarm(0);
     alarmCounter = 0;
