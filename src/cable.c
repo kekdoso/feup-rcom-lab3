@@ -108,12 +108,12 @@ int main(int argc, char** argv)
           if(connection){
              toRx = write(fdRx,tx2rx,fromTx);
              printf("fromTx=%d > toRx= %d \n", fromTx, toRx);
-             fromTx=0;
-             toRx=0;
+             fromTx = 0;
+             toRx = 0;
           } else {
                  printf("fromTx=%d > toRx= CONNECTION OFF \n", fromTx);
-                 fromTx=0;
-                 toRx=0;
+                 fromTx = 0;
+                 toRx = 0;
               }
       }
 
