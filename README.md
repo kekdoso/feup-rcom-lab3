@@ -34,10 +34,9 @@ This project was developed with:
 #1
 If you don't have a serial port you can still implement the protocol and application.
 
-On Windows (you need cygwin):
+On Windows (you can use Ubuntu or Cygwin, for example):
+* https://ubuntu.com/download
 * https://www.cygwin.com/
-* http://www.eltima.com/products/vspdxp/ (trial version)
-* http://www.virtual-serial-port.com/ (trial version)
 
 On Linux:
 * https://tibbo.com/support/downloads/vspdl.html (VSPDL)
