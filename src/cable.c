@@ -38,10 +38,10 @@ int main(int argc, char** argv)
             "--- end  : terminates the program \n \n" );
 
     int fdTx;
-    struct termios oldtioTx,newtioTx;
+    struct termios oldtioTx, newtioTx;
 
-    fdTx = open("/dev/emulatorTx", O_RDWR | O_NOCTTY );
-    if (fdTx <0) {perror("/dev/emulatorTx"); exit(-1); }
+    fdTx = open("/dev/emulatorTx", O_RDWR | O_NOCTTY);
+    if (fdTx < 0) {perror("/dev/emulatorTx"); exit(-1);}
 
     if (tcgetattr(fdTx,&oldtioTx) == -1) { /* save current port settings */
       perror("tcgetattr");
@@ -65,8 +65,8 @@ int main(int argc, char** argv)
 
     int fdRx;
     struct termios oldtioRx,newtioRx;
-    fdRx = open("/dev/emulatorRx", O_RDWR | O_NOCTTY );
-    if (fdRx <0) {perror("/dev/emulatorRx"); exit(-1); }
+    fdRx = open("/dev/emulatorRx", O_RDWR | O_NOCTTY);
+    if (fdRx < 0) {perror("/dev/emulatorRx"); exit(-1);}
 
     if (tcgetattr(fdRx,&oldtioRx) == -1) { /* save current port settings */
       perror("tcgetattr");
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
     newtioRx.c_cc[VTIME]    = 1;   /* inter-character timer unused */
     newtioRx.c_cc[VMIN]     = 0;   /* blocking read until 5 chars received */
     tcflush(fdRx, TCIOFLUSH);
-    if ( tcsetattr(fdRx,TCSANOW,&newtioRx) == -1) {
+    if (tcsetattr(fdRx,TCSANOW,&newtioRx) == -1) {
       perror("tcsetattr");
       exit(-1);
     }
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
     while (STOP == FALSE) {    
 
-      fromTx = read(fdTx,tx2rx,512); 
+      fromTx = read(fdTx, tx2rx, 512); 
       if(fromTx){ 
           if(connection){
              toRx = write(fdRx,tx2rx,fromTx);
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
       }
 
 
-      fromRx = read(fdRx,rx2tx,512); 
+      fromRx = read(fdRx, rx2tx, 512); 
       if(fromRx){ 
           if(connection){
               toTx = write(fdTx,rx2tx,fromRx);
